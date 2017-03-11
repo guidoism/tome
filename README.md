@@ -1,2 +1,4 @@
-# tome
-Description and tools for the .tome file format
+# The .tome file format
+
+## Requirments
+* Single file describing 
