@@ -1,5 +1,7 @@
 # The .tome file format
 
+![XKCD Standards](https://imgs.xkcd.com/comics/standards.png)
+
 ## Requirments
 * Single file
 * Contains metadata, text, and scans
