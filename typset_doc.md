@@ -25,3 +25,6 @@ We have a goal of being iosmorphic with PDF/A.
         relative_position @1 :int8;
       }
     }
+
+We use low-bit relative offsets since in most cases the next glyph is very
+close by. If it's not then we use an empty glyph for the next glyph.
