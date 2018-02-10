@@ -14,4 +14,13 @@ We have a goal of being iosmorphic with PDF/A.
     struct Tome {
       title @0 :Text;
       lines @1 :List(Line);
+      
+      # There's probably a better name than Line
+      struct Line {
+        glyphs @0 :List(HorizontallyPositionedGlyph);
+      }
+      
+      struct HorizontallyPositionedGlyph {
+      
+      }
     }
