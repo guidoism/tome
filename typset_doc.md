@@ -15,13 +15,13 @@ We have a goal of being iosmorphic with PDF/A.
       glyph_dictionary @0 :Int64;
       lines @1 :List(Line);
       
-      # There's probably a better name than Line
       struct Line {
         glyphs @0 :List(PositionedGlyph);
+        relative_position @1 :int8;
       }
       
       struct PositionedGlyph {
         glyph_id @0 :UInt32;
-        relative_position @1 :Uint8;
+        relative_position @1 :int8;
       }
     }
