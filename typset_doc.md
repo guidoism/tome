@@ -12,4 +12,6 @@ We have a goal of being iosmorphic with PDF/A.
 ## Schema
 
     struct Tome {
+      title @0 :Text;
+      lines @1 :List(Line);
     }
