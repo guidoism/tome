@@ -12,15 +12,15 @@ We have a goal of being iosmorphic with PDF/A.
 ## Schema
 
     struct Tome {
-      title @0 :Text;
       lines @1 :List(Line);
       
       # There's probably a better name than Line
       struct Line {
-        glyphs @0 :List(HorizontallyPositionedGlyph);
+        glyphs @0 :List(PositionedGlyph);
       }
       
-      struct HorizontallyPositionedGlyph {
-      
+      struct PositionedGlyph {
+        glyph_id @0 :UInt32;
+        relative_position @1 :Uint8;
       }
     }
