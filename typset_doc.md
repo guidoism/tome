@@ -12,6 +12,7 @@ We have a goal of being iosmorphic with PDF/A.
 ## Schema
 
     struct Tome {
+      glyph_dictionary @0 :Int64;
       lines @1 :List(Line);
       
       # There's probably a better name than Line
