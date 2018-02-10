@@ -4,3 +4,12 @@ it's been entirely downloaded.
 
 Most importantly, and uniquely, it is typeset for a number of popular screen
 or paper widths.
+
+The serialization format is [Cap'N Proto](https://capnproto.org).
+
+We have a goal of being iosmorphic with PDF/A.
+
+## Schema
+
+    struct Tome {
+    }
