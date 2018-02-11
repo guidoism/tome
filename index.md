@@ -7,7 +7,7 @@ or paper widths.
 
 The serialization format is [Cap'N Proto](https://capnproto.org).
 
-We have a goal of being iosmorphic with PDF/A.
+We have a goal of being iosmorphic with **PDF/A**.
 
 ## Schema
 
