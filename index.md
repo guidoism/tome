@@ -1,3 +1,8 @@
+---
+layout: default
+title: Tome File Format
+---
+
 This format represents a typeset doc, like a book, article, or blog post. 
 It's optimized for compactness and speed. The doc can be displayed before
 it's been entirely downloaded.
