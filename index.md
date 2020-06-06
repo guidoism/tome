@@ -19,7 +19,7 @@ repeating them here.
 problems are tooling related. It's very possible to make a **PDF** that works
 well for reading documents over the internet -- You just need to get the width
 just right and you need to use the progressive format and for scanned documents
-you should use JBIG2 compression.
+you should use **JBIG2** compression.
 
 Files are either optimized for archival -- It's meant to preserve as much as
 possible and live in source control -- Or optimized for viewing.
