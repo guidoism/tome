@@ -4,7 +4,7 @@ title: Tome File Format
 ---
 
 This format represents a typeset document, like a book, article, or blog post.
-It is meant as a replacement for HTML/CSS and PDF for those contexts.
+It is meant as a replacement for **HTML/CSS** and **PDF** for those contexts.
 
 Files are either optimized for archival -- It's meant to preserve as much as
 possible and live in source control -- Or optimized for viewing.
