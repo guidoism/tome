@@ -15,4 +15,4 @@ and get this adopted by the document-centric web.
 # Assumptions
 
 * The current web is a cacophyony of bad taste
-* The experiements with the use of Gopher and Gemini
+* Various people advotated for a "small web" have been experiementing with the use of Gopher and Gemini
