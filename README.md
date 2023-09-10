@@ -11,3 +11,8 @@ legibility, accessibility, and latency to first complete screen rendering.
 This is my quixotic attempt to put forth something better, 
 get an official RFC published, 
 and get this adopted by the document-centric web.
+
+# Assumptions
+
+* The current web is a cacophyony of bad taste
+* The experiements with the use of Gopher and Gemini
