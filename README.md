@@ -15,4 +15,4 @@ and get this adopted by the document-centric web.
 # Assumptions
 
 * The current web is a cacophyony of bad taste
-* Various people advotated for a "small web" have been experiementing with the use of Gopher and Gemini. We should learn from these experiments but we don't believe that a protocol incompatible will further our goals.
+* Various people advotated for a "small web" have been experiementing with the use of Gopher and Gemini. We should learn from these experiments but we don't believe that a protocol incompatible with the web will further our goals.
