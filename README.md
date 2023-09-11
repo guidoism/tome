@@ -34,5 +34,46 @@ and get this adopted by the document-centric web.
 * A plain-text UFT-8 document is valid and should be rendered as is with MLModern-typewriter with word-wrapping being client-configurable (given this is a monospaced font clients should also make it easy to swap out with your desired monospaced font)
 * Use the first 31 characters (excluding null) of ASCII (and UTF-8) as the control characters they were intended to be. We don't need to follow them exactly, but it would be nice to be a little bit consistent so if we open up a document in a text editor we can understand some of it.
 
+    if ch >= 32
+        if ch < 128:
+            draw(ch)
+            moveright(width(ch))
+    else:
+        if ch == 9: # ASCII Horizontal Tab
+            x = readint(input)
+            moveright(x)
 
 
+### Original ASCII Control Character Semantics
+
+- 01 Start of Heading
+- 02 Start of Text
+- 03 End of Text
+- 04 End of Transmission
+- 05 Enquiry
+- 06 Acknowledgement
+- 07 Bell
+- 08 Backspace
+- 09 Horizontal Tab
+- 10 Line Feed
+- 11 Vertical Tab
+- 12 Form Feed
+- 13 Carriage Return
+- 14 Shift Out
+- 15 Shift In
+- 16 Data Link Escape
+- 17 Device Control 1 (often XON)
+- 18 Device Control 2
+- 19 Device Control 3 (often XOFF)
+- 20 Device Control 4
+- 21 Negative Acknowledgement
+- 22 Synchronous Idle
+- 23 End of Transmission Block
+- 24 Cancel
+- 25 End of Medium
+- 26 Substitute
+- 27 Escape
+- 28 File Separator
+- 29 Group Separator
+- 30 Record Separator
+- 31 Unit Separator
