@@ -39,10 +39,12 @@ and get this adopted by the document-centric web.
             draw(ch)
             moveright(width(ch))
     else:
-        if ch == 9: # ASCII Horizontal Tab
+        if ch == 9:               # ASCII Horizontal Tab
             x = readint(input)
             moveright(x)
-
+        elif ch == 11:            # ASCII Vertical Tab
+            y = readint(input)
+            movedown(y)
 
 ### Original ASCII Control Character Semantics
 
