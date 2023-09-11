@@ -16,7 +16,7 @@ and get this adopted by the document-centric web.
 
 * The current web is a cacophyony of bad taste
 * Various people advotated for a "small web" have been experiementing with the use of Gopher and Gemini. We should learn from these experiments but we don't believe that a protocol incompatible with the web will further our goals.
-* The format should be optimized for the latency from the start of the first HTTP GET to being finished drawing the first screenful of text with the intended fonts.
+* The format should be optimized for latency from the start of the first HTTP GET to being finished drawing the first screenful of text in the intended fonts.
 * The read-to-write ratio is potentially very high therefore we should optimize for the reading experience.
 * Rendering a document under normal circumstances should be not much more than the following commands for each character: 1. Move the drawing cursor to the next location (relative), 2. Draw the glyph for the current character.
 * Given the previous point, under normal circumstances, the client should *not* have to do any fancy layout. It should just follow commands. Layout should have happened beforehand on the server when the document was published.
