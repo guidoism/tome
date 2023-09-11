@@ -2,6 +2,23 @@
 
 ![XKCD Standards](https://imgs.xkcd.com/comics/standards.png)
 
+# Introduction
+
+My dream is to have a large percentage of the content I want to read
+on the web published with an aesthetically pleasing typographical
+style in a format that quick to download and render.
+
+In a standard browser I should be able to click on a link to one
+of these new-style hypertext documents and it should download
+and render quicker than a well-typeset standard html/css/javascript
+document.
+
+These documents should also be renderable outside of a standard
+web browser. 
+
+This is a discussion of the problems I want solved and a potential
+solution that should fit easily in with the current web.
+
 # Motivations
 
 The web — circa 2023 — is optimized for webapps. The public
@@ -28,6 +45,7 @@ and get this adopted by the document-centric web.
 * The standard fonts should be standard and distributed to everyone. We don't want to display different fonts to different people because their OS vendor chose to buy fonts from a particular foundary.
 * TeX's standard fonts are a good default, though maybe using the ones optimized for screens rather than printing. The unifont is a good fallback for the rest of the unicode glyphs.
 * It's not entirely clear in my head whether navigation controls around the document or website should be provided by the docuemnt or the reader.
+* Dark-mode/light-mode is here to stay and should be configurable on every document.
   
 # Proposal
 
