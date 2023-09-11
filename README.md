@@ -28,3 +28,6 @@ and get this adopted by the document-centric web.
 * The standard fonts should be standard and distributed to everyone. We don't want to display different fonts to different people because their OS vendor chose to buy fonts from a particular foundary.
 * TeX's standard fonts are a good default, though maybe using the ones optimized for screens rather than printing. The unifont is a good fallback for the rest of the unicode glyphs.
 * It's not entirely clear in my head whether navigation controls around the document or website should be provided by the docuemnt or the reader.
+
+# Proposal
+
