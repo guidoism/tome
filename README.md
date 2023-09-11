@@ -37,6 +37,8 @@ and get this adopted by the document-centric web.
 * Numbers used as parameters for commands are encoded as [LEB128](https://en.wikipedia.org/wiki/LEB128)
 * The control character 01 means read a signed LEB128 number from the input and move to the right that number of units.
 * The control character 02 means read a signed LEB128 number from the input and move down that number of units.
+* The control character 09 means move to the right a default amount (we need to figure out what to set the default to)
+* The control character 13 means move relative down and absolute left a configured amount.
 
 
 ### Original ASCII Control Character Semantics
