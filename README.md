@@ -33,10 +33,10 @@ and get this adopted by the document-centric web.
 
 * A plain-text UFT-8 document is valid and should be rendered as is with MLModern-typewriter with word-wrapping being client-configurable (given this is a monospaced font clients should also make it easy to swap out with your desired monospaced font) 
 * A byte with value 32-127 is drawn as the current font and the cursor is moved to the right by the glyph width, RTL languages have negative widths so this works the same way).
-* Use the first 31 characters (excluding null) of ASCII (and UTF-8) as the control characters they were intended to be. We don't need to follow them exactly, but it would be nice to be a little bit consistent so if we open up a document in a text editor we can understand some of it.
+* Use the first 31 characters (excluding null) of ASCII (and UTF-8) as the control characters they were intended to be. 
 * Numbers used as parameters for commands are encoded as [LEB128](https://en.wikipedia.org/wiki/LEB128)
-* The control character 9 means read a signed LEB128 number from the input and move to the right that number of units.
-* The control character 11 means read a signed LEB128 number from the input and move down that number of units.
+* The control character 01 means read a signed LEB128 number from the input and move to the right that number of units.
+* The control character 02 means read a signed LEB128 number from the input and move down that number of units.
 
 
 ### Original ASCII Control Character Semantics
