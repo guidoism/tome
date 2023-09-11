@@ -72,3 +72,31 @@ and get this adopted by the document-centric web.
 - 29 Group Separator
 - 30 Record Separator
 - 31 Unit Separator
+
+### DVI Opcodes
+
+From [The DVI File Format](https://web.archive.org/web/20070403030353/http://www.math.umd.edu/~asnowden/comp-cont/dvi.html)
+
+- Opcodes 0-127: set_char_i (0 <= i <= 127)
+- Opcodes 128-131: seti (1 <= i <= 4); c[i]
+- Opcode 132: set_rule; a[4], b[4]
+- Opcodes 133-136: puti (1 <= i <= 4); c[i]
+- Opcode 137: put_rule; a[4], b[4]
+- Opcode 138: nop
+- Opcode 139: bop; c_0[4]..c_9[4], p[4]
+- Opcode 140: eop
+- Opcode 141: push
+- Opcode 142: pop
+- Opcodes 143-146: righti (1 <= i <= 4); b[i]
+- Opcodes 147-151: wi (0 <= i <= 4); b[i]
+- Opcodes 152-156: xi (0 <= i <= 4); b[i]
+- Opcodes 157-160: downi (1 <= i <= 4); a[i]
+- Opcodes 161-165: yi (0 <= i <= 4); a[i]
+- Opcodes 166-170: zi (0 <= i <= 4); a[i]
+- Opcodes 171-234: fnt_num_i (0 <= i <= 63)
+- Opcodes 235-238: fnti (1 <= i <= 4); k[i]
+- Opcodes 239-242: xxxi (1 <= i <= 4); k[i], x[k]
+- Opcodes 243-246: fnt_defi (1 <= i <= 4); k[i], c[4], s[4], d[4], a[1], l[1], n[a+l]
+- Opcodes 247: pre; i[1], num[4], den[4], mag[4], k[1], x[k]
+- Opcodes 248: post; p[4], num[4], den[4], mag[4], l[4], u[4], s[2], t[2]; < font definitions >
+- Opcodes 249: post_post; q[4], i[1]; 223's
