@@ -31,3 +31,4 @@ and get this adopted by the document-centric web.
 
 # Proposal
 
+* A plain-text UFT-8 document is valid and should be rendered as is with word-wrapping being client-configurable
