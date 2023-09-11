@@ -31,4 +31,4 @@ and get this adopted by the document-centric web.
 
 # Proposal
 
-* A plain-text UFT-8 document is valid and should be rendered as is with word-wrapping being client-configurable
+* A plain-text UFT-8 document is valid and should be rendered as is with MLModern-typewriter with word-wrapping being client-configurable (given this is a monospaced font clients should also make it easy to swap out with your desired monospaced font)
