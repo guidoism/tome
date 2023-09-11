@@ -28,7 +28,11 @@ and get this adopted by the document-centric web.
 * The standard fonts should be standard and distributed to everyone. We don't want to display different fonts to different people because their OS vendor chose to buy fonts from a particular foundary.
 * TeX's standard fonts are a good default, though maybe using the ones optimized for screens rather than printing. The unifont is a good fallback for the rest of the unicode glyphs.
 * It's not entirely clear in my head whether navigation controls around the document or website should be provided by the docuemnt or the reader.
-
+  
 # Proposal
 
 * A plain-text UFT-8 document is valid and should be rendered as is with MLModern-typewriter with word-wrapping being client-configurable (given this is a monospaced font clients should also make it easy to swap out with your desired monospaced font)
+* Use the first 31 characters (excluding null) of ASCII (and UTF-8) as the control characters they were intended to be. We don't need to follow them exactly, but it would be nice to be a little bit consistent so if we open up a document in a text editor we can understand some of it.
+
+
+
