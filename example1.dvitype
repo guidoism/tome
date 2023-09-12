@@ -1,0 +1,43 @@
+This is DVItype, Version 3.6 (TeX Live 2022)
+Options selected:
+  Starting page = * 
+  Maximum number of pages = 1000000
+  Output level = 4 (the works)
+  Resolution = 300.00000000 pixels per inch
+numerator/denominator=25400000/473628672
+magnification=1000;       0.00006334 pixels per DVI unit
+' LuaTeX output 2023.09.11:2205'
+Postamble starts at byte 170.
+maxv=36962304, maxh=22806528, maxstackdepth=2, totalpages=1
+Font 123: rm-mlmtt10---loaded at size 655360 DVI units 
+Font 96: rm-mlmr10---loaded at size 655360 DVI units 
+ 
+45: beginning of page 1 
+90: push 
+level 0:(h=0,v=0,w=0,x=0,y=0,z=0,hh=0,vv=0) 
+91: push 
+level 1:(h=0,v=0,w=0,x=0,y=0,z=0,hh=0,vv=0) 
+92: right3 1245184 h:=0+1245184=1245184, hh:=79 
+[ ]
+96: down3 2228224 v:=0+2228224=2228224, vv:=141 
+100: fntdef1 123: rm-mlmtt10 
+126: fnt1 123 current font is rm-mlmtt10 
+128: setchar101 h:=1245184+344063=1589247, hh:=101 
+129: setchar102 h:=1589247+344063=1933310, hh:=123 
+130: setchar102 h:=1933310+344063=2277373, hh:=145 
+131: setchar105 h:=2277373+344063=2621436, hh:=167 
+132: setchar110 h:=2621436+344063=2965499, hh:=189 
+133: right3 344063 h:=2965499+344063=3309562, hh:=210 
+[effin ]
+137: fntdef1 96: rm-mlmr10 
+162: fnt1 96 current font is rm-mlmr10 
+164: setchar101 h:=3309562+291275=3600837, hh:=228 
+[e]
+165: setchar14 h:=3600837+546111=4146948, hh:=263 
+166: setchar110 h:=4146948+364085=4511033, hh:=286 
+[n]
+167: pop 
+level 1:(h=0,v=0,w=0,x=0,y=0,z=0,hh=0,vv=0) 
+168: pop 
+level 0:(h=0,v=0,w=0,x=0,y=0,z=0,hh=0,vv=0) 
+169: eop 
