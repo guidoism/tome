@@ -214,8 +214,19 @@ The actual example contains some setup, but after that it's basically just this.
 |     258 |          df |     223 | ß |                       |                                        |
 |     259 |          df |     223 | ß |                       |                                        |
 
+** The only operations that really matter
 
-
+right3 0x130000
+down3 0x220000
+fntdef1 123 0x2e401ac5 655360 655360 0 10 "rm-mlmtt10"
+fnt1 123
+"effin"
+right3 0x053fff
+fntdef1 123 0x77087382 655360 655360 0 9 "rm-mlmr10"
+fnt1 96
+"e"
+setchar14
+"n"
 
 ** DVI Hex Dump
 
