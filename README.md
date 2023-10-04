@@ -47,6 +47,7 @@ and get this adopted by the document-centric web.
 * It's not entirely clear in my head whether navigation controls around the document or website should be provided by the docuemnt or the reader.
 * Dark-mode/light-mode is here to stay and should be configurable on every document.
 * It should be dead-simple to write a reader that ignores formatting and just wants to render plain text. It could be as simple as ignoring every byte below 32.
+* Given that we want the latency to first page displayed to be low as possible, for non-standard fonts maybe we should encode a 32x64 (or something) bitmap version of the characters used on that first page along with those characters
 
 # Proposal
 
@@ -69,6 +70,21 @@ and get this adopted by the document-centric web.
 
 ![effin effin](example1.png)
 
+```
+11 80 80 cc 00                                                              R 1245184 (right)
+12 80 80 88 01                                                              D 2228224 (down)
+13 fb 00 2e 40 1a c5 80 80 28 80 80 28 00 0a 72 6d 2d 6d 6c 6d 74 74 31 30  L 123 0x2e401ac5 655360 655360 0 10 rm-mlmtt10
+14 fb 00                                                                    F 123 (set current font)
+65 66 66 69 6e                                                              "effin"
+11 ff ff 14                                                                 R 344063
+ TODO something that indicates that this R is a space character
+13 e0 00 77 08 73 82 80 80 28 80 80 28 00 09 72 6d 2d 6d 6c 6d 72 31 30     L 96 0x77087382 655360 655360 0 9 "rm-mlmr10"
+14 e0 00                                                                    F 96 (set current font)
+65                                                                          "e"
+0e                                                                          "ffi" glyph
+ TODO something that indicates that this character represetnts ffi
+6e                                                                          "n"
+```
 
 # References
 

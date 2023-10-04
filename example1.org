@@ -223,7 +223,7 @@ fntdef1 123 0x2e401ac5 655360 655360 0 10 "rm-mlmtt10"
 fnt1 123
 "effin"
 right3 0x053fff
-fntdef1 123 0x77087382 655360 655360 0 9 "rm-mlmr10"
+fntdef1 96 0x77087382 655360 655360 0 9 "rm-mlmr10"
 fnt1 96
 "e"
 setchar14
