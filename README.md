@@ -49,6 +49,10 @@ and get this adopted by the document-centric web.
 * It should be dead-simple to write a reader that ignores formatting and just wants to render plain text. It could be as simple as ignoring every byte below 32.
 * Given that we want the latency to first page displayed to be low as possible, for non-standard fonts maybe we should encode a 32x64 (or something) bitmap version of the characters used on that first page along with those characters
 
+# Open Questions
+
+* What should the default unit be? TeX and DVI have special units. In the web we use pixel-like units that are 2x or 3x the size of the actual pixels sometimes. Should we use the web units?
+
 # Proposal
 
 * A plain-text UTF-8 document is valid and should be rendered as is with MLModern-typewriter with word-wrapping being client-configurable (given this is a monospaced font clients should also make it easy to swap out with your desired monospaced font) 
