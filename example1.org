@@ -216,7 +216,7 @@ The actual example contains some setup, but after that it's basically just this.
 
 ** The only operations that really matter
 
-```
+#+begin_example
 right3 0x130000
 down3 0x220000
 fntdef1 123 0x2e401ac5 655360 655360 0 10 "rm-mlmtt10"
@@ -228,7 +228,7 @@ fnt1 96
 "e"
 setchar14
 "n"
-```
+#+end_example
 
 ** DVI Hex Dump
 
