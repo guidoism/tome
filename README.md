@@ -61,8 +61,13 @@ and get this adopted by the document-centric web.
 
 ## Example 1
 
-![effin effin](example1.png)
+```latex
+\tt effin
+\rm effin
+\bye
+```
 
+![effin effin](example1.png)
 
 
 # References
