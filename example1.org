@@ -1,3 +1,13 @@
+** TeX
+
+The actual example contains some setup, but after that it's basically just this.
+
+#+begin_src tex
+\tt effin
+\rm effin
+\bye
+#+end_src
+
 ** DVI Byte Description
 
 |       0 |          f7 |     247 | ÷ | preamble              |                                        |
