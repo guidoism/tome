@@ -53,9 +53,9 @@ and get this adopted by the document-centric web.
 * A plain-text UTF-8 document is valid and should be rendered as is with MLModern-typewriter with word-wrapping being client-configurable (given this is a monospaced font clients should also make it easy to swap out with your desired monospaced font) 
 * A byte with value 32-127 is drawn as the current font and the cursor is moved to the right by the glyph width, RTL languages have negative widths so this works the same way).
 * Use the first 31 characters (excluding null) of ASCII (and UTF-8) as the control characters they were intended to be. 
-* Numbers used as parameters for commands are encoded as [LEB128](https://en.wikipedia.org/wiki/LEB128)
-* The control character 01 means read a signed LEB128 number from the input and move to the right that number of units.
-* The control character 02 means read a signed LEB128 number from the input and move down that number of units.
+* Numbers used as parameters for commands are encoded as variable width integer (either [LEB128](https://en.wikipedia.org/wiki/LEB128) or [PrefixVarint](https://chromium.googlesource.com/chromiumos/third_party/libtextclassifier/+/adbbad2e0138453af45cc08cb3d04317ae2b8ba1/utils/base/prefixvarint.h) or [SQLite Varint](https://sqlite.org/src4/doc/trunk/www/varint.wiki))
+* The control character 01 means read a signed variable width number from the input and move to the right that number of units.
+* The control character 02 means read a signed variable width number from the input and move down that number of units.
 * The control character 09 means move to the right a default amount (we need to figure out what to set the default to)
 * The control character 13 means move relative down and absolute left a configured amount.
 
