@@ -50,7 +50,7 @@ and get this adopted by the document-centric web.
 
 # Proposal
 
-* A plain-text UFT-8 document is valid and should be rendered as is with MLModern-typewriter with word-wrapping being client-configurable (given this is a monospaced font clients should also make it easy to swap out with your desired monospaced font) 
+* A plain-text UTF-8 document is valid and should be rendered as is with MLModern-typewriter with word-wrapping being client-configurable (given this is a monospaced font clients should also make it easy to swap out with your desired monospaced font) 
 * A byte with value 32-127 is drawn as the current font and the cursor is moved to the right by the glyph width, RTL languages have negative widths so this works the same way).
 * Use the first 31 characters (excluding null) of ASCII (and UTF-8) as the control characters they were intended to be. 
 * Numbers used as parameters for commands are encoded as [LEB128](https://en.wikipedia.org/wiki/LEB128)
