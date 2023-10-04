@@ -52,6 +52,7 @@ and get this adopted by the document-centric web.
 # Open Questions
 
 * What should the default unit be? TeX and DVI have special units. In the web we use pixel-like units that are 2x or 3x the size of the actual pixels sometimes. Should we use the web units?
+* What size should the inline bitmap fonts be?
 
 # Proposal
 
