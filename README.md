@@ -97,6 +97,11 @@ and get this adopted by the document-centric web.
 
 ```
 
+# Conversion Opportunities
+
+* Wikipedia
+* Hacker News
+
 # References
 
 * [The Website Obesity Crisis](https://idlewords.com/talks/website_obesity.htm)
