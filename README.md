@@ -94,7 +94,18 @@ and get this adopted by the document-centric web.
 
 ### Minimal Subset
 ```
-
+11 55                  Right 85 pixels
+12 5f                  Down 95 pixels
+13 00 2e 40 1a c5      Load font slot 00 with font with hash 2e401ac5
+13 01 77 08 73 82      Load font slot 01 with font with hash 77087382
+14 00                  Set current font to slot 00
+65 66 66 69 6e         Print "effin"
+11 4e                  Right 78 pixels
+14 01                  Set current font to slot 01
+65                     Print "e"
+15 0e 03               Consume the next 3 codepoints as print glyph 0e in their place
+66 66 69               Print "ffi" as a ligature
+6e                     Print "n"
 ```
 
 # Conversion Opportunities
