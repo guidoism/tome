@@ -63,10 +63,7 @@ and get this adopted by the document-centric web.
 * A byte with value 32-127 is drawn as the current font and the cursor is moved to the right by the glyph width, RTL languages have negative widths so this works the same way).
 * Use the first 31 characters (excluding null) of ASCII (and UTF-8) as the control characters they were intended to be. 
 * Numbers used as parameters for commands are encoded as variable width integer (either [LEB128](https://en.wikipedia.org/wiki/LEB128) or [PrefixVarint](https://chromium.googlesource.com/chromiumos/third_party/libtextclassifier/+/adbbad2e0138453af45cc08cb3d04317ae2b8ba1/utils/base/prefixvarint.h) or [SQLite Varint](https://sqlite.org/src4/doc/trunk/www/varint.wiki))
-* The control character 01 means read a signed variable width number from the input and move to the right that number of units.
-* The control character 02 means read a signed variable width number from the input and move down that number of units.
-* The control character 09 means move to the right a default amount (we need to figure out what to set the default to)
-* The control character 13 means move relative down and absolute left a configured amount.
+* The sequence should be: 1. Declare the fonts used, 2. Download the first screenful of content, 3. Download the font map
 
 ## Example 1
 
@@ -95,6 +92,7 @@ and get this adopted by the document-centric web.
 
 ### Minimal Subset
 ```
+10 80 80 28            Set scale to 655360
 11 55                  Right 85 pixels
 12 5f                  Down 95 pixels
 13 00 2e 40 1a c5      Load font slot 00 with font with hash 2e401ac5
@@ -117,7 +115,8 @@ and get this adopted by the document-centric web.
 # References
 
 * [The Website Obesity Crisis](https://idlewords.com/talks/website_obesity.htm)
-
+* [DVI By Example](https://skeptric.com/dvi-by-example/index.html)
+* [DVI-Decode](https://github.com/matjp/dvi-decode/blob/main/dvi-decode.md)
 ### Original ASCII Control Character Semantics
 
 - 01 Start of Heading
