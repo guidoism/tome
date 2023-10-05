@@ -49,6 +49,7 @@ and get this adopted by the document-centric web.
 * It should be dead-simple to write a reader that ignores formatting and just wants to render plain text. It could be as simple as ignoring every byte below 32.
 * Given that we want the latency to first page displayed to be low as possible, for non-standard fonts maybe we should encode a 32x64 (or something) bitmap version of the characters used on that first page along with those characters
 * If we are going to inline a font map, it would be ideal to use a progressive format like JPEG-XL
+* The total size of a webpage (including all assets) should be smaller than a png screenshot of it
 
 # Open Questions
 
@@ -97,6 +98,8 @@ and get this adopted by the document-centric web.
 ```
 
 # References
+
+* [The Website Obesity Crisis](https://idlewords.com/talks/website_obesity.htm)
 
 ### Original ASCII Control Character Semantics
 
