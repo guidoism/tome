@@ -48,6 +48,7 @@ and get this adopted by the document-centric web.
 * Dark-mode/light-mode is here to stay and should be configurable on every document.
 * It should be dead-simple to write a reader that ignores formatting and just wants to render plain text. It could be as simple as ignoring every byte below 32.
 * Given that we want the latency to first page displayed to be low as possible, for non-standard fonts maybe we should encode a 32x64 (or something) bitmap version of the characters used on that first page along with those characters
+* If we are going to inline a font map, it would be ideal to use a progressive format like JPEG-XL
 
 # Open Questions
 
@@ -75,6 +76,7 @@ and get this adopted by the document-centric web.
 
 ![effin effin](example1.png)
 
+### Pretty much just a minimized DVI
 ```
 11 80 80 cc 00                                                              R 1245184 (right)
 12 80 80 88 01                                                              D 2228224 (down)
@@ -87,6 +89,11 @@ and get this adopted by the document-centric web.
 65                                                                          "e"
 15 0e 03 66 66 69                                                           "ffi" ligature using glyph 0e
 6e                                                                          "n"
+```
+
+### Minimal Subset
+```
+
 ```
 
 # References
