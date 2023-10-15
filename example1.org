@@ -265,7 +265,7 @@ Options selected:
   Output level = 4 (the works)
   Resolution = 300.00000000 pixels per inch
 numerator/denominator=25400000/473628672
-magnification=1000;       0.00006334 pixels per DVI unit
+magnification=1000; 0.00006334 pixels per DVI unit
 ' LuaTeX output 2023.09.11:2205'
 Postamble starts at byte 170.
 maxv=36962304, maxh=22806528, maxstackdepth=2, totalpages=1

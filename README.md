@@ -51,11 +51,18 @@ and get this adopted by the document-centric web.
 * If we are going to inline a font map, it would be ideal to use a progressive format like JPEG-XL
 * The total size of a webpage (including all assets) should be smaller than a png screenshot of it
 * There's a tension between a format for archival purposes and a format for getting content quickly on the web. How can we reconcile this? I want to be able to archive webpages that I've visited.
+* My 24" 4k monitor has a DPI of 183 ([source](https://www.sven.de/dpi/))
 
 # Open Questions
 
 * What should the default unit be? TeX and DVI have special units. In the web we use pixel-like units that are 2x or 3x the size of the actual pixels sometimes. Should we use the web units?
 * What size should the inline bitmap fonts be?
+
+# Existing Solutions
+
+* [The HINT File Format](https://hint.userweb.mwn.de/hint/format.html) - Changes to TeX to output some of the internal state it uses to make layout decisions. I have high hopes for this format but it doesn't quite fit our needs as it is page-centric (as a replacement for PDF and DVI) and our goals are specifically a web-document replacement.
+* Gopher
+* Gemini
 
 # Proposal
 
@@ -117,6 +124,7 @@ and get this adopted by the document-centric web.
 * [The Website Obesity Crisis](https://idlewords.com/talks/website_obesity.htm)
 * [DVI By Example](https://skeptric.com/dvi-by-example/index.html)
 * [DVI-Decode](https://github.com/matjp/dvi-decode/blob/main/dvi-decode.md)
+
 ### Original ASCII Control Character Semantics
 
 - 01 Start of Heading
