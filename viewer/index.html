@@ -66,24 +66,31 @@
     display: flex;
     gap: 12px;
     align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
-  .controls label {
+  .controls label, .controls button {
     font-size: 13px;
     color: #888;
     cursor: pointer;
     padding: 6px 14px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, background 0.2s;
+    background: white;
   }
-  .controls label:hover {
+  .controls label:hover, .controls button:hover {
     border-color: #999;
+  }
+  .controls button.active {
+    background: #333;
+    color: #fff;
+    border-color: #333;
   }
   .controls input[type="file"] {
     display: none;
   }
-
   .controls select {
     font-size: 13px;
     padding: 6px 10px;
@@ -92,9 +99,41 @@
     background: white;
   }
 
-  #canvas {
-    background: white;
+  /* --- Document container with text overlay --- */
+  .doc-container {
+    position: relative;
     box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+  }
+
+  #canvas {
+    display: block;
+    background: white;
+  }
+
+  #text-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #text-overlay .text-line {
+    position: absolute;
+    color: transparent;
+    white-space: pre;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+  }
+
+  #text-overlay .text-line::selection {
+    background: rgba(0, 100, 255, 0.3);
+  }
+
+  #text-overlay .text-line *::selection {
+    background: rgba(0, 100, 255, 0.3);
   }
 
   #status {
@@ -102,6 +141,80 @@
     font-size: 12px;
     color: #999;
   }
+
+  /* --- Hex dump --- */
+  #hexdump-container {
+    display: none;
+    margin-top: 20px;
+    width: 720px;
+    max-width: 95vw;
+  }
+
+  #hexdump-container.visible {
+    display: block;
+  }
+
+  .hexdump-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .hexdump-header h2 {
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #666;
+  }
+
+  .hexdump-legend {
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+  }
+  .hexdump-legend span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .hexdump-legend .swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+
+  #hexdump {
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    background: #1a1a2e;
+    color: #a0a0b0;
+    padding: 16px;
+    border-radius: 6px;
+    overflow-x: auto;
+    white-space: pre;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+  }
+
+  .hd-off     { color: #555570; }
+  .hd-opcode  { color: #ff6b6b; font-weight: bold; }
+  .hd-param   { color: #ffd93d; }
+  .hd-strlen  { color: #6bcb77; }
+  .hd-strdata { color: #4d96ff; }
+  .hd-text    { color: #e0e0e0; }
+  .hd-end     { color: #ff6b6b; font-weight: bold; }
+  .hd-nop     { color: #555570; }
+  .hd-unknown { color: #555570; }
+
+  .sw-opcode  { background: #ff6b6b; }
+  .sw-param   { background: #ffd93d; }
+  .sw-strlen  { background: #6bcb77; }
+  .sw-strdata { background: #4d96ff; }
+  .sw-text    { background: #e0e0e0; }
+  .sw-end     { background: #ff6b6b; }
 </style>
 </head>
 <body>
@@ -118,49 +231,196 @@
       Open file&hellip;
       <input type="file" id="file-input" accept=".tome">
     </label>
+    <button id="hex-toggle">Hex</button>
   </div>
 
-  <canvas id="canvas"></canvas>
+  <div class="doc-container">
+    <canvas id="canvas"></canvas>
+    <div id="text-overlay"></div>
+  </div>
   <div id="status"></div>
+
+  <div id="hexdump-container">
+    <div class="hexdump-header">
+      <h2>Hex Dump</h2>
+      <div class="hexdump-legend">
+        <span><span class="swatch sw-opcode"></span>opcode</span>
+        <span><span class="swatch sw-param"></span>param</span>
+        <span><span class="swatch sw-strlen"></span>str len</span>
+        <span><span class="swatch sw-strdata"></span>str data</span>
+        <span><span class="swatch sw-text"></span>text</span>
+        <span><span class="swatch sw-end"></span>end</span>
+      </div>
+    </div>
+    <div id="hexdump"></div>
+  </div>
 
   <script src="tome.js"></script>
   <script>
     const canvas = document.getElementById('canvas');
-    const status = document.getElementById('status');
+    const textOverlay = document.getElementById('text-overlay');
+    const statusEl = document.getElementById('status');
     const select = document.getElementById('sample-select');
     const fileInput = document.getElementById('file-input');
+    const hexToggle = document.getElementById('hex-toggle');
+    const hexContainer = document.getElementById('hexdump-container');
+    const hexDump = document.getElementById('hexdump');
 
-    // Wait for fonts to load before rendering
+    let currentBuffer = null;
+
     document.fonts.ready.then(() => {
       loadSample(select.value);
     });
 
-    select.addEventListener('change', () => {
-      loadSample(select.value);
-    });
+    select.addEventListener('change', () => loadSample(select.value));
 
     fileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
-        status.textContent = `${file.name} — ${reader.result.byteLength} bytes`;
-        Tome.render(canvas, reader.result);
+        currentBuffer = reader.result;
+        statusEl.textContent = `${file.name} — ${currentBuffer.byteLength} bytes`;
+        const result = Tome.render(canvas, currentBuffer);
+        buildTextOverlay(result.textPlacements, result.linkRegions, result.links);
+        updateHexDump();
       };
       reader.readAsArrayBuffer(file);
     });
 
+    hexToggle.addEventListener('click', () => {
+      hexToggle.classList.toggle('active');
+      hexContainer.classList.toggle('visible');
+      if (hexContainer.classList.contains('visible') && currentBuffer) {
+        updateHexDump();
+      }
+    });
+
     async function loadSample(url) {
-      status.textContent = 'Loading…';
+      statusEl.textContent = 'Loading\u2026';
       try {
         const resp = await fetch(url);
-        const buf = await resp.arrayBuffer();
-        status.textContent = `${url.split('/').pop()} — ${buf.byteLength} bytes`;
-        Tome.render(canvas, buf);
+        currentBuffer = await resp.arrayBuffer();
+        statusEl.textContent = `${url.split('/').pop()} — ${currentBuffer.byteLength} bytes`;
+        const result = Tome.render(canvas, currentBuffer);
+        buildTextOverlay(result.textPlacements, result.linkRegions, result.links);
+        updateHexDump();
       } catch (err) {
-        status.textContent = `Error: ${err.message}`;
+        statusEl.textContent = `Error: ${err.message}`;
         console.error(err);
       }
+    }
+
+    function updateHexDump() {
+      if (!currentBuffer) return;
+      if (!hexContainer.classList.contains('visible')) return;
+      hexDump.innerHTML = Tome.hexDumpHTML(currentBuffer);
+    }
+
+    // --- Text overlay for selection/copy ---
+
+    function buildTextOverlay(placements, linkRegions, links) {
+      textOverlay.innerHTML = '';
+      if (!placements || placements.length === 0) return;
+
+      // Group characters into lines by Y coordinate (±1px tolerance)
+      const lineMap = new Map();
+      for (const p of placements) {
+        const key = Math.round(p.yPx);
+        if (!lineMap.has(key)) lineMap.set(key, []);
+        lineMap.get(key).push(p);
+      }
+
+      // Build a link region lookup
+      function linkAtPos(xPx, yPx) {
+        for (const r of linkRegions) {
+          if (xPx >= r.x && xPx <= r.x + r.w &&
+              yPx >= r.y && yPx <= r.y + r.h) {
+            return r.url;
+          }
+        }
+        return null;
+      }
+
+      // Sort lines top-to-bottom
+      const sortedKeys = [...lineMap.keys()].sort((a, b) => a - b);
+
+      for (const yKey of sortedKeys) {
+        const chars = lineMap.get(yKey);
+        chars.sort((a, b) => a.xPx - b.xPx);
+
+        // Split into runs of the same font
+        const runs = [];
+        let run = { chars: [chars[0]], css: chars[0].css,
+                     style: chars[0].style, weight: chars[0].weight,
+                     family: chars[0].family, sizePx: chars[0].sizePx };
+        for (let i = 1; i < chars.length; i++) {
+          const c = chars[i];
+          if (c.css === run.css) {
+            run.chars.push(c);
+          } else {
+            runs.push(run);
+            run = { chars: [c], css: c.css, style: c.style,
+                    weight: c.weight, family: c.family, sizePx: c.sizePx };
+          }
+        }
+        runs.push(run);
+
+        // Create a container div for this line
+        const lineDiv = document.createElement('div');
+        lineDiv.className = 'text-line';
+        const firstChar = chars[0];
+        // Position: baseline Y → top of text ≈ Y - fontSize * 0.8
+        lineDiv.style.left = firstChar.xPx + 'px';
+        lineDiv.style.top = (firstChar.yPx - firstChar.sizePx * 0.8) + 'px';
+        lineDiv.style.font = firstChar.css;
+
+        for (const r of runs) {
+          const text = r.chars.map(c => c.ch).join('');
+          if (r.css === firstChar.css) {
+            lineDiv.appendChild(document.createTextNode(text));
+          } else {
+            const span = document.createElement('span');
+            span.style.font = r.css;
+            span.textContent = text;
+            lineDiv.appendChild(span);
+          }
+        }
+
+        // Trailing space so word-wrapped lines copy with spaces between them
+        lineDiv.appendChild(document.createTextNode(' '));
+
+        textOverlay.appendChild(lineDiv);
+      }
+
+      // Handle link clicks on the overlay
+      textOverlay.onclick = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        for (const region of linkRegions) {
+          if (mx >= region.x && mx <= region.x + region.w &&
+              my >= region.y && my <= region.y + region.h) {
+            window.open(region.url, '_blank');
+            return;
+          }
+        }
+      };
+
+      textOverlay.onmousemove = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        let over = false;
+        for (const region of linkRegions) {
+          if (mx >= region.x && mx <= region.x + region.w &&
+              my >= region.y && my <= region.y + region.h) {
+            over = true;
+            break;
+          }
+        }
+        textOverlay.style.cursor = over ? 'pointer' : '';
+      };
     }
   </script>
 </body>
