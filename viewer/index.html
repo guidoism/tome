@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tome Viewer</title>
+<style>
+  @font-face {
+    font-family: 'MLModern';
+    src: url('fonts/mlmr10.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'MLModern';
+    src: url('fonts/mlmri10.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'MLModern';
+    src: url('fonts/mlmbx10.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'MLModern';
+    src: url('fonts/mlmbxi10.woff2') format('woff2');
+    font-weight: 700;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'MLModern Mono';
+    src: url('fonts/mlmtt10.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #f5f5f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    font-family: system-ui, sans-serif;
+    color: #333;
+  }
+
+  header {
+    padding: 20px;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #666;
+  }
+
+  .controls {
+    margin: 10px 0 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .controls label {
+    font-size: 13px;
+    color: #888;
+    cursor: pointer;
+    padding: 6px 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.2s;
+  }
+  .controls label:hover {
+    border-color: #999;
+  }
+  .controls input[type="file"] {
+    display: none;
+  }
+
+  .controls select {
+    font-size: 13px;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+  }
+
+  #canvas {
+    background: white;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+  }
+
+  #status {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #999;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Tome Viewer</h1>
+  </header>
+
+  <div class="controls">
+    <select id="sample-select">
+      <option value="../samples/article.tome">article.tome</option>
+      <option value="../samples/hello.tome">hello.tome</option>
+    </select>
+    <label>
+      Open file&hellip;
+      <input type="file" id="file-input" accept=".tome">
+    </label>
+  </div>
+
+  <canvas id="canvas"></canvas>
+  <div id="status"></div>
+
+  <script src="tome.js"></script>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const status = document.getElementById('status');
+    const select = document.getElementById('sample-select');
+    const fileInput = document.getElementById('file-input');
+
+    // Wait for fonts to load before rendering
+    document.fonts.ready.then(() => {
+      loadSample(select.value);
+    });
+
+    select.addEventListener('change', () => {
+      loadSample(select.value);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        status.textContent = `${file.name} — ${reader.result.byteLength} bytes`;
+        Tome.render(canvas, reader.result);
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+    async function loadSample(url) {
+      status.textContent = 'Loading…';
+      try {
+        const resp = await fetch(url);
+        const buf = await resp.arrayBuffer();
+        status.textContent = `${url.split('/').pop()} — ${buf.byteLength} bytes`;
+        Tome.render(canvas, buf);
+      } catch (err) {
+        status.textContent = `Error: ${err.message}`;
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
