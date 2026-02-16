@@ -711,6 +711,271 @@ const Tome = (() => {
     return lines.join('\n');
   }
 
+  // --- Disassembler (dvitype-style) ---
+
+  function pxNote(tu) {
+    return (tu / 64).toFixed(1) + 'px';
+  }
+
+  function truncStr(s, max) {
+    if (s.length <= max) return s;
+    return s.slice(0, max - 1) + '\u2026';
+  }
+
+  /**
+   * Disassemble a .tome byte stream into human-readable instructions.
+   * Returns HTML string.
+   */
+  function disassembleHTML(arrayBuffer) {
+    const bytes = new Uint8Array(arrayBuffer);
+    const lines = [];
+    let offset = 0;
+
+    // State tracking for richer annotations
+    const fonts = {};   // slot → { name, size }
+    let currentFont = null;
+
+    function off() { return offset.toString(16).padStart(4, '0'); }
+
+    function readVarint() {
+      const r = decodePrefixVarint(bytes, offset);
+      offset += r.bytesRead;
+      return r.value;
+    }
+    function readSigned() {
+      const pr = decodePrefixVarint(bytes, offset);
+      const r = decodeSignedVarint(bytes, offset);
+      offset += pr.bytesRead;
+      return r.value;
+    }
+    function readStr() {
+      const r = decodeString(bytes, offset);
+      offset += r.bytesRead;
+      return r.value;
+    }
+
+    function emit(startOffset, cls, opName, detail, note) {
+      const offStr = startOffset.toString(16).padStart(4, '0');
+      const nameHtml = `<span class="da-op">${escapeHtml(opName.padEnd(12))}</span>`;
+      const detailHtml = detail ? `<span class="da-${cls}">${escapeHtml(detail)}</span>` : '';
+      const noteHtml = note ? `  <span class="da-note">${escapeHtml(note)}</span>` : '';
+      lines.push(`<span class="da-off">${offStr}</span>  ${nameHtml}${detailHtml}${noteHtml}`);
+    }
+
+    // Collect runs of text characters
+    function flushText() {
+      if (offset >= bytes.length) return;
+      const byte = bytes[offset];
+      if (byte < 0x20 || byte === 0x7F) return;
+      if (byte < 0x20) return;
+
+      const startOff = offset;
+      let text = '';
+      while (offset < bytes.length) {
+        const b = bytes[offset];
+        if (b < 0x20 || b === 0x7F || b === 0xFF) break;
+        if (b >= 0x80 && b < 0xC0) break;
+        const { ch, bytesRead } = decodeUtf8Char(bytes, offset);
+        text += ch;
+        offset += bytesRead;
+      }
+      if (text.length > 0) {
+        const display = truncStr(text, 60);
+        emit(startOff, 'str', 'text', `"${display}"`, `${text.length} chars`);
+      }
+    }
+
+    while (offset < bytes.length) {
+      const byte = bytes[offset];
+
+      if (byte === OP.END) {
+        emit(offset, 'op', 'END', '', '');
+        break;
+      }
+
+      // Text characters — group into a single entry
+      if (byte >= 0x20 && byte !== 0x7F) {
+        flushText();
+        continue;
+      }
+      if (byte >= 0x80) {
+        flushText();
+        continue;
+      }
+
+      // Opcode
+      const instrOff = offset;
+      offset++;
+
+      switch (byte) {
+        case OP.NUL:
+          emit(instrOff, 'op', 'NUL', '', '');
+          break;
+        case 0x0D:
+          emit(instrOff, 'op', 'CR_IGNORE', '', 'Windows line ending');
+          break;
+
+        case OP.RIGHT: {
+          const sv = readSigned();
+          emit(instrOff, 'param', 'RIGHT', `${sv}`, pxNote(sv));
+          break;
+        }
+        case OP.DOWN: {
+          const sv = readSigned();
+          emit(instrOff, 'param', 'DOWN', `${sv}`, pxNote(sv));
+          break;
+        }
+        case OP.MOVETO: {
+          const x = readSigned();
+          const y = readSigned();
+          emit(instrOff, 'param', 'MOVETO', `x=${x} y=${y}`, `(${pxNote(x)}, ${pxNote(y)})`);
+          break;
+        }
+        case OP.CR:
+          emit(instrOff, 'op', 'CR', '', 'x := 0');
+          break;
+        case OP.LF_DOWN: {
+          const v = readVarint();
+          emit(instrOff, 'param', 'LF_DOWN', `${v}`, `CR + down ${pxNote(v)}`);
+          break;
+        }
+
+        case OP.FONT_DEF: {
+          const slot = readVarint();
+          const hashHi = readVarint();
+          const hashLo = readVarint();
+          const size = readVarint();
+          const name = readStr();
+          fonts[slot] = { name, size };
+          emit(instrOff, 'str', 'FONT_DEF', `slot=${slot} size=${size} "${name}"`,
+               `${pxNote(size)} hash=${hashHi}:${hashLo}`);
+          break;
+        }
+        case OP.FONT: {
+          const slot = readVarint();
+          const f = fonts[slot];
+          currentFont = f || null;
+          const note = f ? `current font is ${f.name}` : '';
+          emit(instrOff, 'param', 'FONT', `slot=${slot}`, note);
+          break;
+        }
+
+        case OP.SECTION: {
+          const level = readVarint();
+          emit(instrOff, 'param', 'SECTION', `level=${level}`, `h${level}`);
+          break;
+        }
+        case OP.TAB:
+          emit(instrOff, 'op', 'TAB', '', '');
+          break;
+        case OP.NEWLINE:
+          emit(instrOff, 'op', 'NEWLINE', '', '');
+          break;
+        case OP.PARA:
+          emit(instrOff, 'op', 'PARA', '', 'paragraph boundary');
+          break;
+        case OP.LIST_ITEM: {
+          const depth = readVarint();
+          emit(instrOff, 'param', 'LIST_ITEM', `depth=${depth}`, '');
+          break;
+        }
+
+        case OP.LINK_DEF: {
+          const id = readVarint();
+          const url = readStr();
+          emit(instrOff, 'str', 'LINK_DEF', `id=${id} "${truncStr(url, 50)}"`, '');
+          break;
+        }
+        case OP.LINK_START: {
+          const id = readVarint();
+          emit(instrOff, 'param', 'LINK_START', `id=${id}`, '');
+          break;
+        }
+        case OP.LINK_END:
+          emit(instrOff, 'op', 'LINK_END', '', '');
+          break;
+
+        case OP.KERN: {
+          const sv = readSigned();
+          emit(instrOff, 'param', 'KERN', `${sv}`, pxNote(sv));
+          break;
+        }
+        case OP.LIGATURE: {
+          const glyph = readVarint();
+          const n = readVarint();
+          emit(instrOff, 'param', 'LIGATURE', `glyph=${glyph} n=${n}`, '');
+          break;
+        }
+        case OP.RULE: {
+          const w = readVarint();
+          const h = readVarint();
+          emit(instrOff, 'param', 'RULE', `w=${w} h=${h}`, `${pxNote(w)} \u00d7 ${pxNote(h)}`);
+          break;
+        }
+
+        case OP.COLOR: {
+          const rgba = readVarint();
+          const hex = '#' + (rgba >>> 0).toString(16).padStart(8, '0');
+          emit(instrOff, 'param', 'COLOR', hex, '');
+          break;
+        }
+        case OP.BG_COLOR: {
+          const rgba = readVarint();
+          const hex = '#' + (rgba >>> 0).toString(16).padStart(8, '0');
+          emit(instrOff, 'param', 'BG_COLOR', hex, '');
+          break;
+        }
+
+        case OP.IMAGE_DEF: {
+          const id = readVarint();
+          const w = readVarint();
+          const h = readVarint();
+          const url = readStr();
+          emit(instrOff, 'str', 'IMAGE_DEF', `id=${id} ${w}\u00d7${h} "${truncStr(url, 40)}"`, '');
+          break;
+        }
+        case OP.IMAGE: {
+          const id = readVarint();
+          emit(instrOff, 'param', 'IMAGE', `id=${id}`, '');
+          break;
+        }
+
+        case OP.META: {
+          const key = readStr();
+          const val = readStr();
+          emit(instrOff, 'str', 'META', `"${key}" "${truncStr(val, 50)}"`, '');
+          break;
+        }
+        case OP.ANCHOR: {
+          const name = readStr();
+          emit(instrOff, 'str', 'ANCHOR', `"${name}"`, '');
+          break;
+        }
+
+        case OP.PUSH:
+          emit(instrOff, 'op', 'PUSH', '', 'save state');
+          break;
+        case OP.POP:
+          emit(instrOff, 'op', 'POP', '', 'restore state');
+          break;
+
+        case OP.EXTENSION: {
+          const extType = readVarint();
+          const extLen = readVarint();
+          offset += extLen;
+          emit(instrOff, 'param', 'EXTENSION', `type=${extType} len=${extLen}`, '');
+          break;
+        }
+
+        default:
+          emit(instrOff, 'op', `0x${byte.toString(16)}`, '', 'unknown opcode');
+          break;
+      }
+    }
+
+    return lines.join('\n');
+  }
+
   // --- Public API ---
 
   async function load(canvas, url) {
@@ -720,5 +985,5 @@ const Tome = (() => {
     return { result: render(canvas, buffer), buffer };
   }
 
-  return { render, load, parse, hexDumpHTML, annotateBytes };
+  return { render, load, parse, hexDumpHTML, disassembleHTML, annotateBytes };
 })();

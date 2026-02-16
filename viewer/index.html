@@ -215,6 +215,48 @@
   .sw-strdata { background: #4d96ff; }
   .sw-text    { background: #e0e0e0; }
   .sw-end     { background: #ff6b6b; }
+
+  /* --- Disassembly --- */
+  #disasm-container {
+    display: none;
+    margin-top: 20px;
+    width: 720px;
+    max-width: 95vw;
+  }
+  #disasm-container.visible { display: block; }
+
+  .disasm-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .disasm-header h2 {
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #666;
+  }
+
+  #disasm {
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    background: #1a1a2e;
+    color: #a0a0b0;
+    padding: 16px;
+    border-radius: 6px;
+    overflow-x: auto;
+    white-space: pre;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+  }
+
+  .da-off   { color: #555570; }
+  .da-op    { color: #ff6b6b; font-weight: bold; }
+  .da-param { color: #ffd93d; }
+  .da-str   { color: #4d96ff; }
+  .da-note  { color: #6bcb77; font-style: italic; }
 </style>
 </head>
 <body>
@@ -232,6 +274,7 @@
       <input type="file" id="file-input" accept=".tome">
     </label>
     <button id="hex-toggle">Hex</button>
+    <button id="disasm-toggle">Disasm</button>
   </div>
 
   <div class="doc-container">
@@ -255,6 +298,13 @@
     <div id="hexdump"></div>
   </div>
 
+  <div id="disasm-container">
+    <div class="disasm-header">
+      <h2>Disassembly</h2>
+    </div>
+    <div id="disasm"></div>
+  </div>
+
   <script src="tome.js"></script>
   <script>
     const canvas = document.getElementById('canvas');
@@ -265,6 +315,9 @@
     const hexToggle = document.getElementById('hex-toggle');
     const hexContainer = document.getElementById('hexdump-container');
     const hexDump = document.getElementById('hexdump');
+    const disasmToggle = document.getElementById('disasm-toggle');
+    const disasmContainer = document.getElementById('disasm-container');
+    const disasmEl = document.getElementById('disasm');
 
     let currentBuffer = null;
 
@@ -284,6 +337,7 @@
         const result = Tome.render(canvas, currentBuffer);
         buildTextOverlay(result.textPlacements, result.linkRegions, result.links);
         updateHexDump();
+        updateDisasm();
       };
       reader.readAsArrayBuffer(file);
     });
@@ -296,6 +350,14 @@
       }
     });
 
+    disasmToggle.addEventListener('click', () => {
+      disasmToggle.classList.toggle('active');
+      disasmContainer.classList.toggle('visible');
+      if (disasmContainer.classList.contains('visible') && currentBuffer) {
+        updateDisasm();
+      }
+    });
+
     async function loadSample(url) {
       statusEl.textContent = 'Loading\u2026';
       try {
@@ -305,6 +367,7 @@
         const result = Tome.render(canvas, currentBuffer);
         buildTextOverlay(result.textPlacements, result.linkRegions, result.links);
         updateHexDump();
+        updateDisasm();
       } catch (err) {
         statusEl.textContent = `Error: ${err.message}`;
         console.error(err);
@@ -315,6 +378,12 @@
       if (!currentBuffer) return;
       if (!hexContainer.classList.contains('visible')) return;
       hexDump.innerHTML = Tome.hexDumpHTML(currentBuffer);
+    }
+
+    function updateDisasm() {
+      if (!currentBuffer) return;
+      if (!disasmContainer.classList.contains('visible')) return;
+      disasmEl.innerHTML = Tome.disassembleHTML(currentBuffer);
     }
 
     // --- Text overlay for selection/copy ---
