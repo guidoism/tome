@@ -7,33 +7,58 @@
 <style>
   @font-face {
     font-family: 'MLModern';
-    src: url('fonts/mlmr10.woff2') format('woff2');
+    src: url('/viewer/fonts/mlmr10.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
   }
   @font-face {
     font-family: 'MLModern';
-    src: url('fonts/mlmri10.woff2') format('woff2');
+    src: url('/viewer/fonts/mlmri10.woff2') format('woff2');
     font-weight: 400;
     font-style: italic;
   }
   @font-face {
     font-family: 'MLModern';
-    src: url('fonts/mlmbx10.woff2') format('woff2');
+    src: url('/viewer/fonts/mlmbx10.woff2') format('woff2');
     font-weight: 700;
     font-style: normal;
   }
   @font-face {
     font-family: 'MLModern';
-    src: url('fonts/mlmbxi10.woff2') format('woff2');
+    src: url('/viewer/fonts/mlmbxi10.woff2') format('woff2');
     font-weight: 700;
     font-style: italic;
   }
   @font-face {
     font-family: 'MLModern Mono';
-    src: url('fonts/mlmtt10.woff2') format('woff2');
+    src: url('/viewer/fonts/mlmtt10.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'TeX Gyre Pagella';
+    src: url('/viewer/fonts/texgyrepagella-regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'TeX Gyre Pagella';
+    src: url('/viewer/fonts/texgyrepagella-italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'TeX Gyre Pagella';
+    src: url('/viewer/fonts/texgyrepagella-bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'TeX Gyre Pagella';
+    src: url('/viewer/fonts/texgyrepagella-bolditalic.woff2') format('woff2');
+    font-weight: 700;
+    font-style: italic;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -266,8 +291,11 @@
 
   <div class="controls">
     <select id="sample-select">
-      <option value="../samples/article.tome">article.tome</option>
-      <option value="../samples/hello.tome">hello.tome</option>
+      <option value="/samples/machines.tome">machines.tome (66ch)</option>
+      <option value="/samples/machines.45.tome">machines.45.tome (45ch)</option>
+      <option value="/samples/machines.90.tome">machines.90.tome (90ch)</option>
+      <option value="/samples/article.tome">article.tome</option>
+      <option value="/samples/hello.tome">hello.tome</option>
     </select>
     <label>
       Open file&hellip;
@@ -305,7 +333,7 @@
     <div id="disasm"></div>
   </div>
 
-  <script src="tome.js"></script>
+  <script src="/viewer/tome.js"></script>
   <script>
     const canvas = document.getElementById('canvas');
     const textOverlay = document.getElementById('text-overlay');

@@ -109,35 +109,69 @@ const Tome = (() => {
   // --- Font name → CSS font-family mapping ---
 
   const FONT_CSS = {
-    'mlmr10':   '"MLModern", serif',
-    'mlmri10':  '"MLModern", serif',
-    'mlmbx10':  '"MLModern", serif',
-    'mlmbxi10': '"MLModern", serif',
-    'mlmtt10':  '"MLModern Mono", monospace',
+    'mlmr10':      '"MLModern", serif',
+    'mlmri10':     '"MLModern", serif',
+    'mlmbx10':     '"MLModern", serif',
+    'mlmbx12':     '"MLModern", serif',
+    'mlmbxi10':    '"MLModern", serif',
+    'mlmtt10':     '"MLModern Mono", monospace',
+    'ts1-mlmr10':  '"MLModern", serif',
+    // Palatino / URW Palladio / TeX Gyre Pagella (classicthesis)
+    'pplr9d':      '"TeX Gyre Pagella", serif',
+    'pplri9d':     '"TeX Gyre Pagella", serif',
+    'pplb9d':      '"TeX Gyre Pagella", serif',
+    'pplbi9d':     '"TeX Gyre Pagella", serif',
+    'pplr9c':      '"TeX Gyre Pagella", serif',
+    'pplrc9d':     '"TeX Gyre Pagella", serif',
   };
 
   const FONT_WEIGHT = {
-    'mlmr10':   '400',
-    'mlmri10':  '400',
-    'mlmbx10':  '700',
-    'mlmbxi10': '700',
-    'mlmtt10':  '400',
+    'mlmr10':      '400',
+    'mlmri10':     '400',
+    'mlmbx10':     '700',
+    'mlmbx12':     '700',
+    'mlmbxi10':    '700',
+    'mlmtt10':     '400',
+    'ts1-mlmr10':  '400',
+    'pplr9d':      '400',
+    'pplri9d':     '400',
+    'pplb9d':      '700',
+    'pplbi9d':     '700',
+    'pplr9c':      '400',
+    'pplrc9d':     '400',
   };
 
   const FONT_STYLE = {
-    'mlmr10':   'normal',
-    'mlmri10':  'italic',
-    'mlmbx10':  'normal',
-    'mlmbxi10': 'italic',
-    'mlmtt10':  'normal',
+    'mlmr10':      'normal',
+    'mlmri10':     'italic',
+    'mlmbx10':     'normal',
+    'mlmbx12':     'normal',
+    'mlmbxi10':    'italic',
+    'mlmtt10':     'normal',
+    'ts1-mlmr10':  'normal',
+    'pplr9d':      'normal',
+    'pplri9d':     'italic',
+    'pplb9d':      'normal',
+    'pplbi9d':     'italic',
+    'pplr9c':      'normal',
+    'pplrc9d':     'normal',
   };
 
+  // Small caps fonts: the DVI virtual font maps lowercase to scaled-down uppercase.
+  // We render these at ~68% of nominal size (x-height / cap-height ratio).
+  const FONT_SMALLCAPS = {
+    'pplrc9d': true,
+  };
+  const SMALLCAP_SCALE = 0.68;
+
   function cssFontFor(fontName, sizeTu) {
-    const sizePx = sizeTu / 64;
+    let sizePx = sizeTu / 64;
+    const isSmallCaps = FONT_SMALLCAPS[fontName] || false;
+    if (isSmallCaps) sizePx *= SMALLCAP_SCALE;
     const style = FONT_STYLE[fontName] || 'normal';
     const weight = FONT_WEIGHT[fontName] || '400';
     const family = FONT_CSS[fontName] || '"MLModern", serif';
-    return { css: `${style} ${weight} ${sizePx}px ${family}`, sizePx, style, weight, family };
+    return { css: `${style} ${weight} ${sizePx}px ${family}`, sizePx, style, weight, family, isSmallCaps };
   }
 
   // --- Renderer ---
@@ -202,22 +236,46 @@ const Tome = (() => {
   function renderTypeset(canvas, bytes) {
     const commands = parse(bytes);
 
-    // Determine canvas dimensions
+    // --- First pass: find content bounding box (with PUSH/POP tracking) ---
     let docWidth = 35200;
-    let maxY = 0;
-    let curY = 0;
+    let minX = Infinity, minY = Infinity;
+    let maxX = -Infinity, maxY = -Infinity;
+    let simX = 0, simY = 0;
+    let simStack = [];
     for (const cmd of commands) {
-      if (cmd.type === 'meta' && cmd.key === 'width') {
-        docWidth = parseInt(cmd.value, 10) || docWidth;
+      switch (cmd.type) {
+        case 'meta':
+          if (cmd.key === 'width') docWidth = parseInt(cmd.value, 10) || docWidth;
+          break;
+        case 'right': case 'kern': simX += cmd.sv; break;
+        case 'down': simY += cmd.sv; break;
+        case 'moveto': simX = cmd.x; simY = cmd.y; break;
+        case 'cr': simX = 0; break;
+        case 'lf_down': simX = 0; simY += cmd.v; break;
+        case 'push': simStack.push([simX, simY]); break;
+        case 'pop': { const s = simStack.pop(); if (s) { simX = s[0]; simY = s[1]; } break; }
+        case 'char':
+          if (simY < minY) minY = simY;
+          if (simY > maxY) maxY = simY;
+          if (simX < minX) minX = simX;
+          if (simX > maxX) maxX = simX;
+          break;
+        case 'rule':
+          if (simY < minY) minY = simY;
+          if (simY + cmd.h > maxY) maxY = simY + cmd.h;
+          if (simX < minX) minX = simX;
+          break;
       }
-      if (cmd.type === 'moveto') curY = cmd.y;
-      if (cmd.type === 'down') curY += cmd.sv;
-      if (cmd.type === 'lf_down') curY += cmd.v;
-      if (curY > maxY) maxY = curY;
     }
+    if (minX === Infinity) { minX = 0; minY = 0; maxX = docWidth; maxY = 0; }
 
-    const widthPx = docWidth / 64;
-    const heightPx = (maxY / 64) + 100;
+    // --- Compute canvas size from content bounds ---
+    const MARGIN = 40 * 64; // 40px margin in tome units
+    const offsetX = minX - MARGIN;
+    const offsetY = minY - MARGIN;
+    const contentHeight = maxY - minY + MARGIN * 3; // top + bottom + extra for descenders
+    const widthPx = docWidth / 64 + 80; // add left+right margin
+    const heightPx = contentHeight / 64;
 
     const dpr = window.devicePixelRatio || 1;
     canvas.width = widthPx * dpr;
@@ -230,8 +288,9 @@ const Tome = (() => {
     ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, widthPx, heightPx);
 
+    // --- Second pass: render with offset ---
     const state = {
-      x: 0, y: 0,
+      x: -offsetX, y: -offsetY,
       color: '#333333',
       bgColor: '#ffffff',
       fontSlot: 0,
@@ -456,8 +515,8 @@ const Tome = (() => {
         const xPx = tu(state.x);
         const yPx = tu(state.y);
         ctx.fillText(cmd.ch, xPx, yPx);
-        const w = ctx.measureText(cmd.ch).width;
-        state.x += w * 64;
+        // Don't advance cursor — positioning comes from explicit RIGHT
+        // commands emitted by the converter using TFM character widths.
         // Record for text overlay
         if (font) {
           state.textPlacements.push({

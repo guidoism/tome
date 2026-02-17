@@ -115,6 +115,9 @@ def op_section(level):
 def op_para():
     return bytes([OP_PARA])
 
+def op_list_item(depth=0):
+    return bytes([OP_LIST_ITEM]) + encode_prefixvarint(depth)
+
 def op_link_def(link_id, url):
     return bytes([OP_LINK_DEF]) + encode_prefixvarint(link_id) + encode_string(url)
 
