@@ -52,6 +52,9 @@ and get this adopted by the document-centric web.
 * The total size of a webpage (including all assets) should be smaller than a png screenshot of it
 * There's a tension between a format for archival purposes and a format for getting content quickly on the web. How can we reconcile this? I want to be able to archive webpages that I've visited.
 * My 24" 4k monitor has a DPI of 183 ([source](https://www.sven.de/dpi/))
+* The [classicthesis](https://ctan.org/pkg/classicthesis) LaTeX package is a very reasonable place to start if we are willing to use LaTeX as opposed to Plain TeX
+* While Minion Pro isn't free and can't be distributed with this we should use it if possible, especially if we are using classicthesis.
+* We should go ahead an use TeX and LaTeX to do the layout for us, no need to re-invent the wheel.
 
 # Open Questions
 
